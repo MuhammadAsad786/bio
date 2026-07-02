@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Portrait placeholder">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A1A20"/><stop offset="1" stop-color="#0B0B0D"/></linearGradient>
+    <radialGradient id="gl" cx="50%" cy="32%" r="70%"><stop offset="0" stop-color="#FF6A00" stop-opacity="0.30"/><stop offset="60%" stop-color="#FF6A00" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#gl)"/>
+  <circle cx="400" cy="360" r="180" fill="#15151A" stroke="#26262E" stroke-width="2"/>
+  <text x="400" y="430" text-anchor="middle" font-family="system-ui,Segoe UI,sans-serif" font-weight="800" font-size="220" fill="#FF6A00">A</text>
+  <text x="400" y="700" text-anchor="middle" font-family="ui-monospace,monospace" font-size="24" fill="#A1A1AA">replace /images/profile/portrait.svg</text>
+</svg>

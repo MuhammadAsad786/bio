@@ -1,0 +1,19 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next
+/out
+
+# production / misc
+*.tsbuildinfo
+next-env.d.ts
+
+# env (keep .env.local.example committed)
+.env*.local
+
+# os / editor
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json

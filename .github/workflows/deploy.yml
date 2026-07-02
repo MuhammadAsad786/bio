@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permissions required for GitHub Pages deployment via OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages deployment at a time; never cancel an in-flight deploy (can corrupt it).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        env:
+          # Project page -> repo name automatically. For a ROOT deploy (user page /
+          # custom domain) set repository Variable BASE_PATH='/' (app normalizes '/' -> root).
+          # English + Urdu ship in ONE build — the language switches at runtime (client store).
+          NEXT_PUBLIC_BASE_PATH: ${{ vars.BASE_PATH != '' && vars.BASE_PATH || github.event.repository.name }}
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ vars.WEB3FORMS_KEY }}
+        run: npm run build
+
+      - name: Disable Jekyll (so the _next/ folder is served)
+        run: touch ./out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+# Custom domain: add public/CNAME containing the domain (copied into out/ automatically)
+# and set repository Variable BASE_PATH='/' so the site serves from root.

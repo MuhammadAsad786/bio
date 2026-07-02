@@ -1,0 +1,1050 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   LIGHT / MINIMAL — design tokens (single source of truth)
+   ============================================================ */
+:root {
+  /* Surfaces */
+  --bg:            #FFFFFF;  /* page background                          */
+  --bg-alt:        #F7F7F8;  /* alternating section bands                */
+  --bg-80:         rgba(255, 255, 255, 0.8); /* translucent sticky header */
+  --surface:       #FFFFFF;  /* cards / panels                           */
+  --surface-2:     #F4F4F5;  /* raised / chips                           */
+  --border:        #E4E4E7;  /* hairline (always pair with a shadow)     */
+  --border-strong: #D4D4D8;  /* emphasized borders / inputs              */
+  --tile:          #FFFFFF;  /* logo/icon tiles — STAYS LIGHT in dark so brand glyphs stay legible */
+
+  /* Brand — 3 tiers (orange kept, but accessible) */
+  --brand:         #FF6A00;  /* large/decorative/icon glyphs ONLY        */
+  --brand-text:    #C2410C;  /* small orange text/links/focus (5.18:1)   */
+  --brand-strong:  #9A3412;  /* hover for orange text                    */
+  --brand-tint:    #FFF3EC;  /* soft orange wash (badges)                */
+
+  /* Actions — near-black (role inverted from orange) */
+  --primary:        #18181B; /* buttons / primary actions                */
+  --primary-hover:  #292524;
+  --primary-press:  #000000;
+
+  /* Accent alias -> brand-text, so existing text-accent usages are AA-safe */
+  --accent:         #C2410C;
+
+  /* Text (contrast vs #FFFFFF) */
+  --text:          #18181B;  /* primary — 17.7:1                          */
+  --text-2:        #52525B;  /* secondary / informational — 7.7:1         */
+  --muted:         #71717A;  /* larger secondary — 4.83:1                 */
+  --text-faint:    #A1A1AA;  /* decorative only (ghost numerals)          */
+
+  /* Status */
+  --danger:        #B91C1C;  /* form error — 5.9:1                        */
+  --success:       #15803D;  /* form success — 4.54:1                     */
+
+  /* Effects */
+  --ring:          var(--brand-text);
+  --gradient-hero: radial-gradient(120% 80% at 50% -10%, rgba(255, 106, 0, 0.08) 0%, rgba(255, 106, 0, 0) 60%);
+
+  /* Soft neutral layered shadows (replace the dark glow) */
+  --shadow-sm:   0 1px 2px rgba(24, 24, 27, 0.06), 0 1px 1px rgba(24, 24, 27, 0.04);
+  --shadow-md:   0 4px 12px -2px rgba(24, 24, 27, 0.10), 0 2px 6px -2px rgba(24, 24, 27, 0.06);
+  --shadow-lg:   0 12px 32px -8px rgba(24, 24, 27, 0.14), 0 4px 12px -4px rgba(24, 24, 27, 0.08);
+  --shadow-glow: var(--shadow-md); /* legacy alias so leftover usages stay neutral on light */
+
+  /* Radii (softer / larger for the minimal look) */
+  --radius:       1rem;
+  --radius-sm:    0.625rem;
+  --radius-lg:    1.25rem;
+  --radius-xl:    1.75rem;
+  --radius-pill:  9999px;
+
+  /* Layout / motion */
+  --header-h:     3.5rem;
+  --ease-out:     cubic-bezier(0.16, 0.84, 0.44, 1);
+
+  color-scheme: light;
+}
+
+/* ============================================================
+   DARK theme — token overrides. Set on <html data-theme="dark">
+   by the no-flash script (see ThemeScript) + the toggle.
+   Same semantic roles, re-tuned for AA contrast on a dark base.
+   --tile deliberately stays LIGHT so multi-colour brand glyphs
+   (Apple/Next.js are near-black) remain legible on their tiles.
+   ============================================================ */
+html[data-theme='dark'] {
+  /* Surfaces */
+  --bg:            #0B0B0C;
+  --bg-alt:        #131316;
+  --bg-80:         rgba(11, 11, 12, 0.72);
+  --surface:       #161619;
+  --surface-2:     #1F1F23;
+  --border:        #2A2A30;
+  --border-strong: #3A3A42;
+  /* --tile stays #FFFFFF (inherited) */
+
+  /* Brand — lighter oranges so small text/links keep AA on dark */
+  --brand:         #FF7A1A;
+  --brand-text:    #FB923C;  /* ~7:1 on --surface */
+  --brand-strong:  #FDBA74;  /* hover (lighter)   */
+  --brand-tint:    #2A1A10;  /* warm wash for pills/badges */
+
+  /* Actions — flip to a light surface (text via text-bg stays correct) */
+  --primary:        #FAFAFA;
+  --primary-hover:  #E4E4E7;
+  --primary-press:  #FFFFFF;
+
+  --accent:         #FB923C;
+
+  /* Text on dark */
+  --text:          #FAFAFA;
+  --text-2:        #C7C7D1;
+  --muted:         #9A9AA6;
+  --text-faint:    #6B6B76;
+
+  /* Status (lighter for dark) */
+  --danger:        #F87171;
+  --success:       #4ADE80;
+
+  --ring:          var(--brand-text);
+  --gradient-hero: radial-gradient(120% 80% at 50% -10%, rgba(255, 122, 26, 0.12) 0%, rgba(255, 122, 26, 0) 60%);
+
+  /* Deeper shadows so elevation reads on a dark base */
+  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.4);
+  --shadow-md:   0 4px 14px -2px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg:   0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 6px 16px -6px rgba(0, 0, 0, 0.5);
+  --shadow-glow: var(--shadow-md);
+
+  color-scheme: dark;
+}
+
+/* Dark-only: tone the aurora blobs down so they don't overpower the dark canvas.
+   (The cursor glow no longer uses a blend mode, so it needs no dark override.) */
+html[data-theme='dark'] .aurora {
+  opacity: 0.5;
+}
+
+/* ============================================================
+   Fluid typographic scale — 320px -> ~1600px viewport
+   ============================================================ */
+:root {
+  --step--1: clamp(0.80rem, 0.76rem + 0.18vw, 0.875rem);
+  --step-0:  clamp(1.00rem, 0.95rem + 0.25vw, 1.125rem); /* body, min 16px */
+  --step-1:  clamp(1.20rem, 1.10rem + 0.50vw, 1.50rem);
+  --step-2:  clamp(1.44rem, 1.25rem + 0.95vw, 2.10rem);
+  --step-3:  clamp(1.85rem, 1.45rem + 2.0vw, 3.4rem);
+  --step-4:  clamp(2.07rem, 1.55rem + 2.60vw, 4.10rem);
+  --step-5:  clamp(2.49rem, 1.65rem + 4.20vw, 5.70rem);
+  --step-display: clamp(2.75rem, 1.50rem + 6.2vw, 6.75rem);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  h1, h2, .break-balance { overflow-wrap: anywhere; }
+
+  section[id] {
+    scroll-margin-top: calc(var(--header-h) + env(safe-area-inset-top) + 1rem);
+  }
+
+  /* Visible, high-contrast keyboard focus on every interactive element */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ring);
+    border-radius: var(--radius-sm);
+  }
+}
+
+@layer components {
+  /* Owns horizontal-overflow containment so html/body stay clean (sticky-safe). */
+  .page-shell {
+    position: relative;
+    width: 100%;
+    overflow-x: clip;
+  }
+
+  /* Skip link for keyboard / screen-reader users */
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    transform: translateY(-150%);
+    background: var(--surface);
+    color: var(--text);
+    padding: 0.625rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+    transition: transform 0.18s ease;
+  }
+  .skip-link:focus { transform: translateY(0); }
+
+  /* ---- Micro-interactions (pure CSS, reduced-motion safe) ---- */
+  .card-lift {
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out),
+      border-color 0.25s var(--ease-out);
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .card-media {
+    overflow: hidden;
+  }
+  .card-media img {
+    transition: transform 0.5s var(--ease-out);
+  }
+  .group:hover .card-media img,
+  .card-media:hover img {
+    transform: scale(1.03);
+  }
+  /* Inline link with a visible-at-rest underline (non-colour cue) */
+  .link-underline {
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--brand-text) 42%, transparent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 0.2s ease, color 0.2s ease;
+  }
+  .link-underline:hover {
+    text-decoration-color: var(--brand-text);
+    color: var(--brand-text);
+  }
+  /* Image load-in */
+  .img-reveal {
+    animation: imgReveal 0.7s var(--ease-out) both;
+  }
+}
+
+/* ============================================================
+   Scroll reveal + stagger
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.7s var(--ease-out);
+}
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+/* Stagger children of a revealed grid via inline --i (capped in JS) */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.6s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.stagger.reveal-in > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Swipeable strips: keep the scroll, hide the bar */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Apps filter — cards animate in only when a tab is switched (the grid is keyed by the
+   active filter, so it remounts and replays this on each change), not on scroll. */
+.cat-grid > * {
+  animation: catCardIn 0.42s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes catCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   3D app-icon tiles (Skills) — kept as a tasteful nod, re-tuned for light
+   ============================================================ */
+.skill3d {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30%;
+  background:
+    radial-gradient(120% 75% at 50% 0%, color-mix(in srgb, var(--c) 52%, white 48%) 0%, transparent 55%),
+    linear-gradient(165deg, color-mix(in srgb, var(--c) 88%, white 12%), var(--c) 48%, color-mix(in srgb, var(--c) 74%, black 26%));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.22),
+    0 10px 18px -6px color-mix(in srgb, var(--c) 60%, transparent),
+    0 3px 6px rgba(24, 24, 27, 0.16);
+  transition: transform 0.28s var(--ease-out), box-shadow 0.28s ease;
+}
+.skill3d::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), transparent 42%);
+  pointer-events: none;
+}
+.skill3d__glyph {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.4));
+}
+.group:hover .skill3d {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.22),
+    0 16px 26px -8px color-mix(in srgb, var(--c) 70%, transparent),
+    0 5px 10px rgba(24, 24, 27, 0.18);
+}
+
+/* ============================================================
+   Rotating word (hero) + entrance + image reveal
+   ============================================================ */
+.rotating-text {
+  display: inline-block;
+}
+.rotating-text__word {
+  display: inline-block;
+  animation: wordIn 0.5s var(--ease-out);
+}
+@keyframes wordIn {
+  from { opacity: 0; transform: translateY(0.45em); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-rise {
+  animation: rise 0.7s var(--ease-out) both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes imgReveal {
+  from { opacity: 0; transform: scale(1.03); filter: blur(8px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* FAQ accordion (native <details>) — hide the default disclosure marker and
+   rotate the chevron when open. Frozen by the reduced-motion damper below. */
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-chevron {
+  transition: transform 0.25s var(--ease-out);
+}
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+/* Redesigned FAQ: open card gets a brand accent, the toggle fills brand, the answer
+   fades in. Cursor "spotlight" glow tracks the pointer (mouse-only). All frozen by the
+   reduced-motion damper below. */
+.faq-item {
+  position: relative;
+  isolation: isolate;
+  transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+.faq-item[open] {
+  border-color: var(--brand-text);
+  box-shadow: var(--shadow-md);
+}
+.faq-toggle {
+  transition: background-color 0.25s var(--ease-out), border-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out);
+}
+.faq-item[open] .faq-toggle {
+  background: var(--brand-tint);
+  border-color: var(--brand-text);
+  color: var(--brand-text);
+}
+.faq-item[open] .faq-answer {
+  animation: faqAnswerIn 0.3s var(--ease-out) both;
+}
+@keyframes faqAnswerIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Cursor spotlight — a brand glow that follows the pointer across the hovered card.
+   Mouse/fine-pointer only (FaqAccordion also gates the JS), so touch never triggers it.
+   Sits BELOW the copy (glow z-0 + content z-1 via the card's isolate) so it never tints
+   the text. The component writes --mx/--my per card on pointermove. */
+@media (hover: hover) and (pointer: fine) {
+  .faq-item > summary,
+  .faq-item > .faq-answer {
+    position: relative;
+    z-index: 1;
+  }
+  .faq-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, -30%),
+      rgba(255, 106, 0, 0.13),
+      transparent 72%
+    );
+    transition: opacity 0.3s var(--ease-out);
+  }
+  .faq-item:hover::after {
+    opacity: 1;
+  }
+}
+
+/* Smooth height for the answer where supported (progressive enhancement — older browsers
+   snap, as before; pairs with the faqAnswerIn fade above). */
+@media (prefers-reduced-motion: no-preference) {
+  .faq-item {
+    interpolate-size: allow-keywords;
+  }
+  .faq-item::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition: block-size 0.3s var(--ease-out), content-visibility 0.3s allow-discrete;
+  }
+  .faq-item[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* Hero scroll cue — gentle bob inviting the user into the page.
+   Frozen by the reduced-motion damper below. */
+.scroll-cue {
+  animation: scrollCue 1.8s var(--ease-out) infinite;
+}
+@keyframes scrollCue {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+/* ============================================================
+   Reduced motion — freeze decorative animation
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal, .stagger > *, .cat-grid > * { opacity: 1 !important; transform: none !important; }
+  .group:hover .skill3d, .card-lift:hover { transform: none !important; }
+}
+
+/* ============================================================
+   Ambient aurora background (fills the empty side gutters)
+   ============================================================ */
+/* No filter: blur() — a 90px blur on four ~46rem layers is enormously expensive. The
+   radial-gradient's own soft falloff (transparent ~74%) gives the same airy look for free. */
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.aurora-1 {
+  width: 46rem; height: 46rem; left: -16rem; top: -10rem;
+  background: radial-gradient(circle at center, rgba(255, 106, 0, 0.16), transparent 74%);
+  animation: drift1 24s ease-in-out infinite;
+}
+.aurora-2 {
+  width: 44rem; height: 44rem; right: -18rem; top: 22%;
+  background: radial-gradient(circle at center, rgba(255, 153, 71, 0.11), transparent 74%);
+  animation: drift2 30s ease-in-out infinite;
+}
+.aurora-3 {
+  width: 40rem; height: 40rem; left: -8rem; bottom: -14rem;
+  background: radial-gradient(circle at center, rgba(255, 179, 71, 0.14), transparent 74%);
+  animation: drift3 27s ease-in-out infinite;
+}
+.aurora-4 {
+  width: 38rem; height: 38rem; right: -10rem; bottom: 6%;
+  background: radial-gradient(circle at center, rgba(255, 106, 0, 0.10), transparent 74%);
+  animation: drift1 33s ease-in-out infinite;
+}
+/* Livelier, wandering drift — a 4-point closed path per blob (bigger travel + scale swing)
+   so the background feels alive. Transform-only → still GPU-cheap and smooth. */
+@keyframes drift1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  25%  { transform: translate3d(90px, 60px, 0) scale(1.16); }
+  50%  { transform: translate3d(140px, -30px, 0) scale(1.05); }
+  75%  { transform: translate3d(50px, -70px, 0) scale(1.2); }
+}
+@keyframes drift2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  25%  { transform: translate3d(-110px, 50px, 0) scale(1.18); }
+  50%  { transform: translate3d(-60px, 110px, 0) scale(1); }
+  75%  { transform: translate3d(-130px, -20px, 0) scale(1.12); }
+}
+@keyframes drift3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  33%  { transform: translate3d(80px, -60px, 0) scale(1); }
+  66%  { transform: translate3d(-40px, -100px, 0) scale(1.22); }
+}
+
+/* ============================================================
+   Hero ambient tech field — stack icons drifting in a slow loop
+   behind the hero. Masked out of the centre so text stays crisp.
+   ============================================================ */
+/* Stars fill the WHOLE sky — only the headline core gently fades (a soft alpha, not a hard
+   hole) so the icons stay faintly visible behind the text without hurting legibility. */
+.hero-tech-field {
+  -webkit-mask-image: radial-gradient(ellipse 52% 44% at 50% 47%, rgba(0, 0, 0, 0.16) 0%, #000 72%);
+  mask-image: radial-gradient(ellipse 52% 44% at 50% 47%, rgba(0, 0, 0, 0.16) 0%, #000 72%);
+}
+/* Hero icons — slow, continuous circular drift. A closed orbit never decelerates to a stop
+   (unlike a back-and-forth, which "hangs" at each end), so motion stays buttery smooth.
+   linear timing keeps the speed constant; orbA / orbB run opposite directions for variety. */
+/* ---- Hero icon field — ONE smooth orbit per tile -------------------------- */
+/* Each tile runs a SINGLE transform animation: a smooth elliptical orbit at constant
+   `linear` speed. One animation = one cheap compositor layer per tile (was three), and a
+   closed circular path with linear timing never decelerates, so it can't "hang" or jank.
+   No blur, no opacity, no box-shadow repaint while it moves — pure GPU-composited transform. */
+.hero-float {
+  animation-name: heroOrbit;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: var(--dur, 16s);
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+/* Each tile drifts on a smooth ellipse AND spins a full 360° per loop — "stars" that
+   rotate and rotate continuously. translate + rotate are both monotonic across the loop
+   (rotate 0->360 ≡ seamless), so linear timing never decelerates or jumps. */
+@keyframes heroOrbit {
+  0%    { transform: translate3d(var(--ax, 10px), 0, 0) rotate(0deg); }
+  12.5% { transform: translate3d(calc(var(--ax, 10px) * 0.707), calc(var(--ay, 12px) * -0.707), 0) rotate(45deg); }
+  25%   { transform: translate3d(0, calc(var(--ay, 12px) * -1), 0) rotate(90deg); }
+  37.5% { transform: translate3d(calc(var(--ax, 10px) * -0.707), calc(var(--ay, 12px) * -0.707), 0) rotate(135deg); }
+  50%   { transform: translate3d(calc(var(--ax, 10px) * -1), 0, 0) rotate(180deg); }
+  62.5% { transform: translate3d(calc(var(--ax, 10px) * -0.707), calc(var(--ay, 12px) * 0.707), 0) rotate(225deg); }
+  75%   { transform: translate3d(0, var(--ay, 12px), 0) rotate(270deg); }
+  87.5% { transform: translate3d(calc(var(--ax, 10px) * 0.707), calc(var(--ay, 12px) * 0.707), 0) rotate(315deg); }
+  100%  { transform: translate3d(var(--ax, 10px), 0, 0) rotate(360deg); }
+}
+
+/* Hero tiles — each spins in from a RANDOM corner (--enter-x / --enter-y per node) and
+   settles, then the orbit takes over. `both` holds the off-screen start through the per-tile
+   delay so they arrive scattered, not in a line. One-shot, so no permanent layer. */
+.hero-node {
+  animation: heroNodeIn 1.2s var(--ease-out) both;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes heroNodeIn {
+  from { opacity: 0; transform: translate3d(var(--enter-x, 0), var(--enter-y, 0), 0) scale(0.4) rotate(-90deg); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+}
+
+/* Brand-hue halo behind each tile — STATIC + blur-free (the soft gradient falloff IS
+   the glow). Animating a blurred element was the main source of jank. */
+.hero-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0.5;
+  transform: translate(-50%, -50%);
+}
+
+/* ============================================================
+   Custom cursor — "Aura": ambient brand halo + precise ink dot
+   + magnet-snap + frosted contextual label. Mounted by
+   <CustomCursor/> on a fine, motion-allowed pointer (adds
+   .cursor-active to <html>). Transform-only; the ink dot is locked
+   1:1 to the pointer (the real hotspot), so the native cursor can
+   be hidden without losing precision. Touch / reduced-motion gated.
+   ============================================================ */
+.cursor-active,
+.cursor-active * {
+  cursor: none !important;
+}
+
+.cur-glow,
+.cur-ring,
+.cur-dot,
+.cur-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+/* Hidden until the first move, and whenever the pointer leaves the window */
+html:not(.cursor-on) .cur-glow,
+html:not(.cursor-on) .cur-ring,
+html:not(.cursor-on) .cur-dot,
+html:not(.cursor-on) .cur-label {
+  opacity: 0;
+}
+
+/* Soft ambient halo — multiply with a LIGHT brand colour only darkens, so it can
+   never wash out or invert text (unlike a difference blend). */
+/* No filter: blur() and NO mix-blend-mode: a blend mode forces the browser to
+   recomposite everything beneath the 180px glow on EVERY mouse-move frame. The soft
+   low-alpha gradient gives the same halo for free and works on light + dark. */
+.cur-glow {
+  z-index: 9998;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-pill);
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 106, 0, 0.13) 0%,
+    rgba(255, 106, 0, 0.05) 40%,
+    rgba(255, 106, 0, 0) 72%
+  );
+  transition: opacity 0.3s var(--ease-out);
+}
+html.cursor-labeled .cur-glow {
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 106, 0, 0.18) 0%,
+    rgba(255, 106, 0, 0.06) 40%,
+    rgba(255, 106, 0, 0) 72%
+  );
+}
+
+/* Faint crisp inner ring so the glow reads as deliberate, not just a blur */
+.cur-ring {
+  z-index: 9999;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid rgba(255, 106, 0, 0.35);
+  transition: opacity 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+}
+html.cursor-hover .cur-ring {
+  border-color: var(--brand-text);
+}
+
+/* Precise 5px ink dot — the click hotspot */
+.cur-dot {
+  z-index: 10000;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--text);
+  transition: opacity 0.3s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+/* keep the ink dot legible over dark media while a card is hovered */
+html.cursor-hover .cur-dot {
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+/* Frosted contextual label ("tool note") — outer tracks position, inner does the reveal */
+.cur-label {
+  z-index: 10000;
+}
+.cur-label-in {
+  display: block;
+  white-space: nowrap;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--brand-text);
+  background: var(--bg-80);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s var(--ease-out), transform 0.18s var(--ease-out);
+}
+html.cursor-labeled .cur-label-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Touch & reduced-motion: render nothing and restore the native cursor */
+@media (hover: none), (pointer: coarse) {
+  .cur-glow,
+  .cur-ring,
+  .cur-dot,
+  .cur-label {
+    display: none !important;
+  }
+  .cursor-active,
+  .cursor-active * {
+    cursor: auto !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cur-glow,
+  .cur-ring,
+  .cur-dot,
+  .cur-label {
+    display: none !important;
+  }
+  .cursor-active,
+  .cursor-active * {
+    cursor: auto !important;
+  }
+}
+
+/* ============================================================
+   WORKS-WITH — "Popcorn Supernova" brand wall (scoped, self-contained)
+   Scoped to .brand-wall / .brand-chip / .brand-logo ONLY, so other .stagger
+   grids are untouched. GPU-only: transform / opacity / filter / box-shadow /
+   background-position. Per-chip stagger + phase via --i ; per-chip brand glow
+   via --hue ; seeded twist via --spin. Fires off the existing Reveal observer
+   (it adds .reveal-in to the grid when it scrolls into view).
+
+   Composition rule that keeps it jank-free: the FINITE entrance (popcornIn)
+   lives on the CHIP; the INFINITE idle loops (bob + halo) live on the inner
+   .brand-logo WRAPPER; the shimmer rides ::before; the ripple rides ::after.
+   No two animations ever fight over the same property on the same element.
+   ============================================================ */
+
+/* Pre-reveal: chips wait collapsed so they can pop, not fade. */
+.brand-wall.stagger > .brand-chip {
+  opacity: 0;
+  transform: scale(0) rotate(calc(var(--spin, 1) * -12deg));
+  transition: none;
+  transition-delay: 0s;
+}
+
+.brand-chip {
+  --hue: var(--brand);
+  position: relative;
+  isolation: isolate;
+  transform-origin: 50% 60%;          /* pop from just below centre = a "toss" */
+  backface-visibility: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+/* SHIMMER streak (::before): a brand-tinted glass glint, clipped to the rounded
+   rect via clip-path (NOT overflow:hidden, so the ::after ripple stays free). */
+.brand-chip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  clip-path: inset(0 round 1rem);
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    color-mix(in srgb, var(--hue) 24%, transparent) 48%,
+    color-mix(in srgb, var(--hue) 42%, white 14%) 50%,
+    color-mix(in srgb, var(--hue) 24%, transparent) 52%,
+    transparent 62%
+  );
+  background-size: 250% 100%;
+  background-position: 160% 0;
+  opacity: 0;
+  will-change: background-position, opacity;
+}
+
+/* RIPPLE shockwave ring (::after): hidden until hover; expands past the edges. */
+.brand-chip::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  border: 1.5px solid color-mix(in srgb, var(--hue) 70%, transparent);
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Logo wrapper: owns the infinite idle (bob transform + halo filter), kept off
+   the chip so it never collides with the chip's entrance / hover transform. */
+.brand-logo {
+  display: inline-flex;
+  transition: filter 0.3s var(--ease-out);
+}
+.brand-chip svg { transition: filter 0.3s var(--ease-out); }
+
+/* ENTRANCE — fires when the grid scrolls into view. backwards fill holds the
+   collapsed 0% frame through the per-chip stagger delay, then pops; no forward
+   hold, so the idle loops take over cleanly once it ends. */
+.brand-wall.reveal-in > .brand-chip {
+  opacity: 1;
+  /* Resting state the chip lands on AFTER popcornIn ends. Without this it would
+     fall back through the cascade to the pre-reveal `transform: scale(0)` and
+     collapse to invisible (backwards fill holds the start frame, not the end). */
+  transform: none;
+  will-change: transform, box-shadow;
+  animation: popcornIn 0.72s var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 85ms);
+}
+
+/* IDLE — on the wrapper. Negative per-chip delays desync the wall organically;
+   safe here because the wrapper has no finite entrance animation to fight. */
+.brand-wall.reveal-in > .brand-chip > .brand-logo {
+  will-change: transform, filter;
+  animation: logoBob 4.2s ease-in-out infinite, logoHalo 6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.62s), calc(var(--i, 0) * -0.9s);
+}
+
+/* IDLE shimmer on ::before — staggered positive delays send a glint raking
+   across one logo after another. */
+.brand-wall.reveal-in > .brand-chip::before {
+  animation: chipShimmer 5.6s ease-in-out infinite;
+  animation-delay: calc(900ms + var(--i, 0) * 0.5s);
+}
+
+@keyframes popcornIn {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(calc(var(--spin, 1) * -12deg)) translate3d(0, 8px, 0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--hue) 0%, transparent);
+  }
+  35% { opacity: 1; }
+  55% {
+    transform: scale(1.18) rotate(calc(var(--spin, 1) * 4deg)) translate3d(0, -2px, 0);
+    box-shadow: 0 10px 26px -6px color-mix(in srgb, var(--hue) 45%, transparent);
+  }
+  78% {
+    transform: scale(0.93) rotate(calc(var(--spin, 1) * -2deg)) translate3d(0, 0, 0);
+    box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--hue) 28%, transparent);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg) translate3d(0, 0, 0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* Idle bob: tiny 3D float + micro-tilt + breath. Transform only. */
+@keyframes logoBob {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate3d(0, -3px, 0) rotate(0.8deg) scale(1.012); }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+}
+
+/* Idle halo: a soft brand glow breathing around the glyph. Filter only — and on
+   the wrapper, so it composes with the chip box-shadow and the svg hover light-up. */
+@keyframes logoHalo {
+  0%, 100% { filter: drop-shadow(0 0 0 color-mix(in srgb, var(--hue) 0%, transparent)); }
+  50%      { filter: drop-shadow(0 2px 7px color-mix(in srgb, var(--hue) 42%, transparent)); }
+}
+
+/* Idle shimmer: a glint rakes across, then a long dark gap. */
+@keyframes chipShimmer {
+  0%        { background-position: 160% 0;  opacity: 0; }
+  6%        { opacity: 0.85; }
+  22%       { background-position: -60% 0; opacity: 0.85; }
+  30%, 100% { background-position: -60% 0; opacity: 0; }
+}
+
+/* ---- HOVER / FOCUS: the BOOM — giant elastic pop (on the wrapper, so it never
+   retriggers the chip entrance on mouse-leave) + brand glow burst + ring + logo
+   light-up. Gated to fine pointers so touch never sticks. ---- */
+@media (hover: hover) and (pointer: fine) {
+  .brand-wall.reveal-in > .brand-chip:hover {
+    z-index: 2;
+    border-color: color-mix(in srgb, var(--hue) 55%, var(--border));
+    box-shadow:
+      0 16px 34px -8px color-mix(in srgb, var(--hue) 55%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--hue) 22%, transparent),
+      0 4px 12px rgba(24, 24, 27, 0.14);
+  }
+  .brand-wall.reveal-in > .brand-chip:hover > .brand-logo {
+    animation: chipPop 0.5s var(--ease-out) both;
+  }
+  .brand-wall.reveal-in > .brand-chip:hover::after {
+    animation: chipRipple 0.6s var(--ease-out) forwards;
+  }
+  .brand-chip:hover svg {
+    filter:
+      saturate(1.4) brightness(1.08)
+      drop-shadow(0 2px 6px color-mix(in srgb, var(--hue) 40%, transparent));
+  }
+}
+
+/* Keyboard a11y: focus-visible gets the glow + light-up, no shake/pop. */
+.brand-wall.reveal-in > .brand-chip:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-color: color-mix(in srgb, var(--hue) 55%, var(--border));
+  box-shadow:
+    0 16px 34px -8px color-mix(in srgb, var(--hue) 50%, transparent),
+    0 0 0 3px color-mix(in srgb, var(--hue) 20%, transparent);
+}
+.brand-chip:focus-visible svg {
+  filter:
+    saturate(1.4) brightness(1.08)
+    drop-shadow(0 2px 6px color-mix(in srgb, var(--hue) 40%, transparent));
+}
+
+/* Giant elastic pop with a wobble settle (lands slightly lifted). */
+@keyframes chipPop {
+  0%   { transform: translate3d(0, 0, 0)   scale(1)    rotate(0deg); }
+  30%  { transform: translate3d(0, -4px, 0) scale(1.14) rotate(2.5deg); }
+  48%  { transform: translate3d(0, -2px, 0) scale(0.97) rotate(-1.8deg); }
+  64%  { transform: translate3d(0, -3px, 0) scale(1.07) rotate(1.2deg); }
+  80%  { transform: translate3d(0, -2px, 0) scale(1.02) rotate(-0.6deg); }
+  100% { transform: translate3d(0, -2px, 0) scale(1.05) rotate(0deg); }
+}
+
+/* Expanding brand-colour shockwave ring. */
+@keyframes chipRipple {
+  0%   { opacity: 0.9; transform: scale(0.6); }
+  100% { opacity: 0;   transform: scale(1.4); }
+}
+
+/* ---- REDUCED MOTION: freeze EVERYTHING — static, full-colour logos. ---- */
+@media (prefers-reduced-motion: reduce) {
+  .brand-wall.stagger > .brand-chip,
+  .brand-wall.reveal-in > .brand-chip,
+  .brand-wall.reveal-in > .brand-chip:hover,
+  .brand-wall.reveal-in > .brand-chip:focus-visible,
+  .brand-wall.reveal-in > .brand-chip > .brand-logo,
+  .brand-wall.reveal-in > .brand-chip:hover > .brand-logo {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    box-shadow: var(--shadow-sm) !important;
+    border-color: var(--border) !important;
+    will-change: auto;
+  }
+  .brand-chip::before,
+  .brand-wall.reveal-in > .brand-chip::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .brand-chip::after,
+  .brand-wall.reveal-in > .brand-chip:hover::after {
+    animation: none !important;
+    opacity: 0 !important;
+    transform: none !important;
+  }
+  .brand-chip:hover svg,
+  .brand-chip:focus-visible svg { filter: none !important; }
+}
+
+/* ============================================================
+   "Ask Asad" assistant — message entrance + typing dots. Scoped
+   classes; reduced-motion freeze at the end (the global damper also
+   neutralises the panel/scrim transitions, which use Tailwind).
+   ============================================================ */
+.ask-msg-in {
+  animation: askMsgIn 0.28s var(--ease-out) both;
+}
+@keyframes askMsgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.ask-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--muted);
+  animation: askDot 1.2s var(--ease-out) infinite;
+}
+.ask-dot:nth-child(2) { animation-delay: 0.15s; }
+.ask-dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes askDot {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40%           { opacity: 1;   transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ask-msg-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .ask-dot { animation: none !important; opacity: 0.6 !important; }
+}
+
+/* ============================================================
+   Urdu (RTL) — baked when built with NEXT_PUBLIC_LOCALE=ur.
+   <html lang="ur" dir="rtl"> is set per-build in layout.tsx, so
+   these selectors apply with no runtime flip and no flash.
+   ============================================================ */
+/* Remap the type tokens so EVERY existing font-sans / font-display utility AND the base
+   body / h1-h3 rules switch to the Urdu faces automatically — no per-component edits. */
+html[lang='ur'] {
+  --font-sans:    var(--font-ur-sans);
+  --font-mono:    var(--font-ur-sans);   /* Naskh for numeric/mono rows; no Latin mono in Urdu UI */
+  --font-display: var(--font-ur-display);
+}
+html[lang='ur'] body {
+  line-height: 1.9;            /* Naskh needs more leading than the 1.6 base */
+  letter-spacing: normal;      /* never letter-space Arabic script */
+}
+html[lang='ur'] h1,
+html[lang='ur'] h2,
+html[lang='ur'] h3 {
+  line-height: 1.9;            /* Nastaliq is tall — the 1.05 base clips ascenders / nukta dots */
+  letter-spacing: normal;      /* overrides the -0.02em base heading rule */
+  padding-block: 0.12em;       /* breathing room for descenders under overflow:clip ancestors */
+}
+/* Neutralise every tracking-* utility (mono eyebrows etc.) — Arabic joins must not be tracked. */
+html[lang='ur'] [class*='tracking-'] { letter-spacing: normal !important; }
+
+/* ---- RTL fixes for raw CSS / JS-set transforms that have no logical-utility form.
+   All transform-only + static (no transition/animation), so the reduced-motion freezes
+   above are unaffected. ---- */
+[dir='rtl'] .rtl-flip { transform: scaleX(-1); }
+
+/* ScrollProgress: the bar grows from the right edge in RTL. */
+.scroll-progress { transform-origin: left center; }
+[dir='rtl'] .scroll-progress { transform-origin: right center; }
+
+/* Brand-wall shimmer: rake the glint the other way so it follows the reading direction. */
+[dir='rtl'] .brand-chip::before { transform: scaleX(-1); }
+
+/* ============================================================
+   TechFlow — the data-driven flow diagram on the /stack/<slug>/ pages.
+   Nodes rise/fade in with a stagger (one animated layer, transform+opacity
+   only). The horizontal connector arrow flips under RTL via .rtl-flip.
+   ============================================================ */
+@keyframes techNodeIn {
+  from { opacity: 0; transform: translate3d(0, 10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tech-node {
+    opacity: 0;
+    animation: techNodeIn 0.5s var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 80ms);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tech-node { animation: none !important; opacity: 1 !important; transform: none !important; }
+}
